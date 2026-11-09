@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Roots BKK — Barista Exam</title>
+<style>
+:root{--bg:#F6F4F0;--card:#fff;--text:#1C1B19;--t2:#6B665E;--line:#E3DFD7;--brand:#2F4A3A;--brand2:#3E6150;--ok:#1E7B4A;--okbg:#E6F4EC;--bad:#B3261E;--badbg:#FCEBEA;--warn:#8A5A00;--warnbg:#FFF4DB}
+@media(prefers-color-scheme:dark){:root{--bg:#161614;--card:#222220;--text:#F0EEE9;--t2:#A19C92;--line:#38362F;--brand:#7FB596;--brand2:#9AC8AF;--ok:#6FD39B;--okbg:#17301F;--bad:#FF8F88;--badbg:#3A1C1A;--warn:#F2C879;--warnbg:#38300F}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"Sarabun","Noto Sans Thai",system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0}h2{font-size:17px;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.sub{color:var(--t2);font-size:13px}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px}
+input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:var(--bg);color:var(--text)}
+.btn{display:inline-block;padding:12px 18px;border-radius:10px;border:0;background:var(--brand);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+@media(prefers-color-scheme:dark){.btn{color:#10261A}}
+.btn.sec{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row .btn{flex:1}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:6px 0 12px}.bar>i{display:block;height:100%;background:var(--brand);transition:width .2s}
+.sec-tag{font-size:12px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.04em}
+.q{font-size:17px;font-weight:700;margin:6px 0 12px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer;background:var(--card)}
+.opt .l{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--t2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--t2)}
+.opt.sel{border-color:var(--brand);background:var(--okbg)}.opt.sel .l{background:var(--brand);color:#fff;border-color:var(--brand)}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.nav{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.dot{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--card)}
+.dot.done{background:var(--brand);color:#fff;border-color:var(--brand)}.dot.cur{outline:2px solid var(--text)}
+.score{font-size:46px;font-weight:800;color:var(--brand)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px}
+.pill.ok{background:var(--okbg);color:var(--ok)}.pill.bad{background:var(--badbg);color:var(--bad)}.pill.warn{background:var(--warnbg);color:var(--warn)}
+.rv{border-left:4px solid var(--line);padding-left:12px}.rv.ok{border-color:var(--ok)}.rv.bad{border-color:var(--bad)}.rv.warn{border-color:var(--warn)}
+.note{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}.tab{padding:7px 12px;border-radius:99px;border:1px solid var(--line);font-size:13px;cursor:pointer;background:var(--card)}.tab.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.hide{display:none}
+
+.timer{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;display:flex;justify-content:space-between;align-items:center}.timer b{font-size:20px;font-variant-numeric:tabular-nums}.timer.low b{color:var(--bad)}.err{background:var(--badbg);color:var(--bad);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:12px}option:disabled{color:#999}
+</style></head><body><div class="wrap" id="app"></div>
+<script>
+const API="https://script.google.com/macros/s/AKfycbyOYyYLgBJUt0SltVrAW8IFqu6S14-SIbJEGgqrwkWUb6IJAFlL3HZ5gdR0Ec-6jsm69w/exec";
+const DUR_KEY="roots-exam-session";
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const L="ABCD";
+function render(h){$("app").innerHTML=h;window.scrollTo(0,0)}
+async function api(body){
+  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)});
+  return r.json();
+}
+let R=null, F={branch:"",name:"",code:"",err:""}, E=null, tick=null, busy=false;
+
+async function init(){
+  render('<h1>☕ Roots BKK Barista Exam</h1><div class="sub">กำลังโหลด…</div>');
+  const tok=store.get(DUR_KEY);
+  try{
+    if(tok){const r=await api({action:"resume",token:tok});if(r.ok){beginExam(r);return}store.del(DUR_KEY)}
+    R=await api({action:"roster"});
+    if(!R.ok)throw new Error(R.err);
+    showStart();
+  }catch(e){render('<h1>☕ Roots BKK Barista Exam</h1><div class="err">โหลดข้อมูลไม่สำเร็จ: '+esc(e.message)+'</div><div style="margin-top:12px"><button class="btn" onclick="init()">ลองใหม่</button></div>')}
+}
+function showStart(){
+  const names=F.branch?(R.names[F.branch]||[]):[];
+  render(`<h1>☕ Roots BKK Barista Exam</h1><div class="sub">${R.total} ข้อ · ปรนัย · เวลารวม ${R.minutes} นาที · สอบได้ครั้งเดียว · เห็นเฉลยทันทีหลังส่ง</div>
+  <div class="card"><label>สาขา</label><select id="br" onchange="F.branch=this.value;F.name='';F.err='';showStart()"><option value="">— เลือกสาขา —</option>${R.branches.map(b=>`<option ${F.branch==b?"selected":""}>${esc(b)}</option>`).join("")}</select>
+  ${F.branch?`<label>ชื่อ</label><select id="nm" onchange="F.name=this.value"><option value="">— เลือกชื่อ —</option>${names.map(n=>`<option value="${esc(n.name)}" ${n.taken?"disabled":""} ${F.name==n.name?"selected":""}>${esc(n.name)}${n.taken?" (สอบแล้ว)":""}</option>`).join("")}</select>
+  <label>รหัสสาขา</label><input id="cd" type="password" autocomplete="off" autocapitalize="none" value="${esc(F.code)}" oninput="F.code=this.value" placeholder="รหัสที่ได้รับจากผู้ดูแล">`:""}
+  ${F.err?`<div class="err">${esc(F.err)}</div>`:""}
+  <div style="margin-top:16px"><button class="btn" id="go0" onclick="startExam()" ${F.branch?"":"disabled"}>เริ่มทำข้อสอบ</button></div>
+  <p class="sub">เมื่อกดเริ่ม เวลาจะนับทันทีและหยุดไม่ได้ หากหมดเวลาระบบจะส่งคำตอบให้อัตโนมัติ</p></div>`);
+}
+async function startExam(){
+  if(busy)return;
+  if(!F.branch||!F.name||!F.code){F.err="กรุณาเลือกสาขา ชื่อ และกรอกรหัสสาขา";showStart();return}
+  busy=true;$("go0").disabled=true;$("go0").textContent="กำลังเริ่ม…";
+  try{
+    const r=await api({action:"start",branch:F.branch,name:F.name,code:F.code});
+    if(!r.ok){F.err=r.err;busy=false;showStart();return}
+    store.set(DUR_KEY,r.token);F.code="";F.err="";busy=false;beginExam(r);
+  }catch(e){F.err="เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง";busy=false;showStart()}
+}
+function beginExam(r){
+  const saved=JSON.parse(store.get("roots-exam-ans-"+r.token)||"{}");
+  E={token:r.token,name:r.name,branch:r.branch,qs:r.questions,ans:saved,cur:0,
+     endAt:performance.now()+(r.durationSec*1000-(r.serverNow-r.startMs)),submitting:false};
+  clearInterval(tick);tick=setInterval(onTick,1000);showQ();
+}
+const remain=()=>Math.max(0,Math.round((E.endAt-performance.now())/1000));
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+function onTick(){
+  if(!E||E.submitting)return;const s=remain(),t=$("tm");
+  if(t){t.textContent=fmt(s);t.parentNode.classList.toggle("low",s<=300)}
+  if(s<=0)submitExam(true);
+}
+function saveAns(){store.set("roots-exam-ans-"+E.token,JSON.stringify(E.ans))}
+function showQ(){
+  const q=E.qs[E.cur],a=E.ans[q.id],total=E.qs.length,got=Object.keys(E.ans).length,grp=q.g=="P"?"Roots Product & Operation":"Coffee Knowledge";
+  render(`<div class="timer"><span class="sub">${esc(E.name)} · ${esc(E.branch)}</span><span>⏱ <b id="tm">${fmt(remain())}</b></span></div>
+  <div class="bar"><i style="width:${got/total*100}%"></i></div>
+  <div class="card"><div class="sec-tag">${grp} · ข้อ ${E.cur+1}/${total}</div>
+  <div class="q">${esc(q.q)}</div>
+  ${q.img?`<img src="${q.img}" alt="diagram" style="width:100%;border-radius:10px;margin:0 0 12px">`:""}
+  ${q.c.map((c,i)=>`<div class="opt ${a===i?"sel":""}" onclick="pick(${i})"><span class="l">${L[i]}</span><span>${esc(c)}</span></div>`).join("")}</div>
+  <div class="row"><button class="btn sec" onclick="go(-1)" ${E.cur==0?"disabled":""}>← ก่อนหน้า</button>
+  ${E.cur<total-1?`<button class="btn" onclick="go(1)">ถัดไป →</button>`:`<button class="btn" onclick="review()">ตรวจสอบ & ส่ง</button>`}</div>
+  <div class="nav">${E.qs.map((x,i)=>`<div class="dot ${E.ans[x.id]!==undefined?"done":""} ${i==E.cur?"cur":""}" onclick="E.cur=${i};showQ()">${i+1}</div>`).join("")}</div>
+  <div style="margin-top:8px"><button class="btn sec" onclick="review()">ตรวจสอบ & ส่งคำตอบ</button></div>`);
+}
+function pick(i){E.ans[E.qs[E.cur].id]=i;saveAns();showQ()}
+function go(d){E.cur=Math.max(0,Math.min(E.qs.length-1,E.cur+d));showQ()}
+function review(){
+  const miss=E.qs.map((q,i)=>E.ans[q.id]===undefined?i:-1).filter(i=>i>=0);
+  render(`<div class="timer"><span class="sub">ตรวจสอบก่อนส่ง</span><span>⏱ <b id="tm">${fmt(remain())}</b></span></div><div class="card"><p>ตอบแล้ว <b>${E.qs.length-miss.length}</b> / ${E.qs.length} ข้อ</p>
+  ${miss.length?`<p class="sub">ยังไม่ได้ตอบข้อ: ${miss.map(i=>`<a href="#" onclick="E.cur=${i};showQ();return false">${i+1}</a>`).join(", ")}</p>`:""}
+  <p class="sub">เมื่อกดส่งแล้วจะแก้ไม่ได้ และสอบซ้ำไม่ได้ จะเห็นเฉลยทันที</p>
+  <div class="row"><button class="btn sec" onclick="showQ()">กลับไปแก้ไข</button><button class="btn" onclick="submitExam(false)">ส่งคำตอบ</button></div></div>`);
+}
+async function submitExam(auto){
+  if(!E||E.submitting)return;E.submitting=true;clearInterval(tick);
+  render('<h1>กำลังส่งคำตอบ…</h1><div class="sub">'+(auto?"หมดเวลา ระบบส่งให้อัตโนมัติ · ":"")+'อย่าปิดหน้านี้</div>');
+  for(let n=0;n<4;n++){
+    try{
+      const r=await api({action:"submit",token:E.token,answers:E.ans});
+      if(r.ok){store.del(DUR_KEY);store.del("roots-exam-ans-"+E.token);E=null;showResult(r,"wrong");return}
+      if(r.err&&r.err.indexOf("ส่งคำตอบไปแล้ว")>=0){store.del(DUR_KEY);render('<h1>ส่งคำตอบไปแล้ว</h1><div class="sub">ผลถูกบันทึกในระบบแล้ว</div>');return}
+      throw new Error(r.err);
+    }catch(e){await new Promise(r=>setTimeout(r,1500))}
+  }
+  E.submitting=false;
+  render('<h1>ส่งไม่สำเร็จ</h1><div class="err">เชื่อมต่อไม่ได้ คำตอบของคุณยังอยู่ในเครื่อง</div><div style="margin-top:12px"><button class="btn" onclick="submitExam(false)">ลองส่งอีกครั้ง</button></div>');
+}
+let RES=null;
+function showResult(r,f){
+  RES=r;const L2=r.review;
+  const st=x=>x.a===null?"skip":x.a===x.k?"ok":"bad";
+  const idx=L2.filter(x=>f=="all"||(f=="wrong"?st(x)!="ok":st(x)==f));
+  const vb=r.verdict=="ผ่าน"?'<span class="pill ok">ผ่าน</span>':r.verdict=="ไม่ผ่าน"?'<span class="pill bad">ไม่ผ่าน</span>':'<span class="pill warn">รอประกาศเกณฑ์</span>';
+  render(`<h1>ผลสอบ — ${esc(r.name)}</h1><div class="sub">${esc(r.branch)} · ใช้เวลา ${r.minutes} นาที · บันทึกผลแล้ว</div>
+  <div class="card" style="text-align:center"><div class="score">${r.pct}%</div><div>${r.correct} / ${r.total} ข้อ ${vb}</div>
+  <div class="sub" style="margin-top:6px">Roots Product & Operation ${r.prod.c}/${r.prod.t} · Coffee Knowledge ${r.know.c}/${r.know.t}</div></div>
+  <div class="tabs">${[["wrong","ผิด/ไม่ได้ตอบ"],["ok","ถูก"],["all","ทั้งหมด"]].map(([k,t])=>`<div class="tab ${f==k?"on":""}" onclick="showResult(RES,'${k}')">${t}</div>`).join("")}</div>
+  ${idx.map(x=>{const s=st(x);return `<div class="card rv ${s=="ok"?"ok":"bad"}"><div class="sec-tag">${x.g}${x.no} · ${esc(x.s)} ${s=="ok"?'<span class="pill ok">ถูก</span>':s=="bad"?'<span class="pill bad">ผิด</span>':'<span class="pill bad">ไม่ได้ตอบ</span>'}</div>
+  <div class="q">${esc(x.q)}</div>${x.img?`<img src="${x.img}" alt="" style="width:100%;border-radius:10px;margin:0 0 12px">`:""}
+  ${x.c.map((c,j)=>`<div class="opt ${x.k===j?"ok":(x.a===j?"bad":"")}" style="cursor:default"><span class="l">${L[j]}</span><span>${esc(c)}${x.k===j?" ✓":""}${x.a===j?" ← คำตอบของคุณ":""}</span></div>`).join("")}</div>`}).join("")||'<div class="sub">ไม่มีข้อในหมวดนี้</div>'}`);
+}
+init();
+</script></body></html>
