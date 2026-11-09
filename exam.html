@@ -135,9 +135,8 @@ function showResult(r,f){
   RES=r;const L2=r.review;
   const st=x=>x.a===null?"skip":x.a===x.k?"ok":"bad";
   const idx=L2.filter(x=>f=="all"||(f=="wrong"?st(x)!="ok":st(x)==f));
-  const vb=r.verdict=="ผ่าน"?'<span class="pill ok">ผ่าน</span>':r.verdict=="ไม่ผ่าน"?'<span class="pill bad">ไม่ผ่าน</span>':'<span class="pill warn">รอประกาศเกณฑ์</span>';
   render(`<h1>ผลสอบ — ${esc(r.name)}</h1><div class="sub">${esc(r.branch)} · ใช้เวลา ${r.minutes} นาที · บันทึกผลแล้ว</div>
-  <div class="card" style="text-align:center"><div class="score">${r.pct}%</div><div>${r.correct} / ${r.total} ข้อ ${vb}</div>
+  <div class="card" style="text-align:center"><div class="score">${r.pct}%</div><div>${r.correct} / ${r.total} ข้อ</div>
   <div class="sub" style="margin-top:6px">Roots Product & Operation ${r.prod.c}/${r.prod.t} · Coffee Knowledge ${r.know.c}/${r.know.t}</div></div>
   <div class="tabs">${[["wrong","ผิด/ไม่ได้ตอบ"],["ok","ถูก"],["all","ทั้งหมด"]].map(([k,t])=>`<div class="tab ${f==k?"on":""}" onclick="showResult(RES,'${k}')">${t}</div>`).join("")}</div>
   ${idx.map(x=>{const s=st(x);return `<div class="card rv ${s=="ok"?"ok":"bad"}"><div class="sec-tag">${x.g}${x.no} · ${esc(x.s)} ${s=="ok"?'<span class="pill ok">ถูก</span>':s=="bad"?'<span class="pill bad">ผิด</span>':'<span class="pill bad">ไม่ได้ตอบ</span>'}</div>
