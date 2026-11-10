@@ -113,11 +113,15 @@ function review(){
   const miss=E.qs.map((q,i)=>E.ans[q.id]===undefined?i:-1).filter(i=>i>=0);
   render(`<div class="timer"><span class="sub">ตรวจสอบก่อนส่ง</span><span>⏱ <b id="tm">${fmt(remain())}</b></span></div><div class="card"><p>ตอบแล้ว <b>${E.qs.length-miss.length}</b> / ${E.qs.length} ข้อ</p>
   ${miss.length?`<p class="sub">ยังไม่ได้ตอบข้อ: ${miss.map(i=>`<a href="#" onclick="E.cur=${i};showQ();return false">${i+1}</a>`).join(", ")}</p>`:""}
+  ${miss.length?`<p class="err">ต้องตอบให้ครบทุกข้อก่อน จึงจะกดส่งได้ (เหลืออีก ${miss.length} ข้อ) · ถ้าหมดเวลา ระบบจะส่งให้อัตโนมัติ</p>`:""}
   <p class="sub">เมื่อกดส่งแล้วจะแก้ไม่ได้ และสอบซ้ำไม่ได้ จะเห็นเฉลยทันที</p>
-  <div class="row"><button class="btn sec" onclick="showQ()">กลับไปแก้ไข</button><button class="btn" onclick="submitExam(false)">ส่งคำตอบ</button></div></div>`);
+  <div class="row"><button class="btn sec" onclick="${miss.length?`E.cur=${miss[0]};showQ()`:"showQ()"}">${miss.length?"ไปทำข้อที่เหลือ":"กลับไปแก้ไข"}</button><button class="btn" onclick="submitExam(false)" ${miss.length?"disabled":""}>ส่งคำตอบ</button></div></div>`);
 }
 async function submitExam(auto){
-  if(!E||E.submitting)return;E.submitting=true;clearInterval(tick);
+  if(!E||E.submitting)return;
+  if(auto)E.timedOut=true;
+  if(!auto&&!E.timedOut&&E.qs.some(q=>E.ans[q.id]===undefined)){review();return}   // must answer every question unless time runs out
+  E.submitting=true;clearInterval(tick);
   render('<h1>กำลังส่งคำตอบ…</h1><div class="sub">'+(auto?"หมดเวลา ระบบส่งให้อัตโนมัติ · ":"")+'อย่าปิดหน้านี้</div>');
   for(let n=0;n<4;n++){
     try{
