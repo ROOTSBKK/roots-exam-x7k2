@@ -37,7 +37,7 @@ input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-ra
 .timer{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;display:flex;justify-content:space-between;align-items:center}.timer b{font-size:20px;font-variant-numeric:tabular-nums}.timer.low b{color:var(--bad)}.err{background:var(--badbg);color:var(--bad);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:12px}option:disabled{color:#999}
 </style></head><body><div class="wrap" id="app"></div>
 <script>
-const API="https://script.google.com/macros/s/AKfycbzO-DM3mmlQUuv1r8IuepBnZVuUD6zQKvkccRfXQzwwHZHt6gFkuleOdsAfY9DX89ryZQ/exec";
+const API="https://script.google.com/macros/s/AKfycby7YnWcFx64XG9iMayPlD_gSGaBHjNn4F4RjKIJcIkZXfqlOzSfMez0M79m9ZfmbSo1Og/exec";
 const DUR_KEY="roots-exam-session";
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 const $=id=>document.getElementById(id);
@@ -141,7 +141,7 @@ function showResult(r,f){
   const idx=L2.filter(x=>f=="all"||(f=="wrong"?st(x)!="ok":st(x)==f));
   render(`<h1>ผลสอบ — ${esc(r.name)}</h1><div class="sub">${esc(r.branch)} · ใช้เวลา ${r.minutes} นาที · บันทึกผลแล้ว</div>
   <div class="card" style="text-align:center"><div class="score">${r.pct}%</div><div>${r.correct} / ${r.total} ข้อ</div>
-  <div class="sub" style="margin-top:6px">Roots Product & Operation ${r.prod.c}/${r.prod.t} · Coffee Knowledge ${r.know.c}/${r.know.t}</div></div>
+  <div class="sub" style="margin-top:6px">${r.shelf?`Product ${r.prod.c}/${r.prod.t} · Shelf Life ${r.shelf.c}/${r.shelf.t} · Coffee Knowledge ${r.know.c}/${r.know.t}`:`Roots Product & Operation ${r.prod.c}/${r.prod.t} · Coffee Knowledge ${r.know.c}/${r.know.t}`}</div></div>
   <div class="tabs">${[["wrong","ผิด/ไม่ได้ตอบ"],["ok","ถูก"],["all","ทั้งหมด"]].map(([k,t])=>`<div class="tab ${f==k?"on":""}" onclick="showResult(RES,'${k}')">${t}</div>`).join("")}</div>
   ${idx.map(x=>{const s=st(x);return `<div class="card rv ${s=="ok"?"ok":"bad"}"><div class="sec-tag">${x.g}${x.no} · ${esc(x.s)} ${s=="ok"?'<span class="pill ok">ถูก</span>':s=="bad"?'<span class="pill bad">ผิด</span>':'<span class="pill bad">ไม่ได้ตอบ</span>'}</div>
   <div class="q">${esc(x.q)}</div>${x.img?`<img src="${x.img}" alt="" style="width:100%;border-radius:10px;margin:0 0 12px">`:""}
